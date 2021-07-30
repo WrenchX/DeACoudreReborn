@@ -1,0 +1,4 @@
+name: DeACoudreReborn
+version: ${project.version}
+main: me.poutineqc.deacoudre.Deacoudre
+api-version: 1.17
