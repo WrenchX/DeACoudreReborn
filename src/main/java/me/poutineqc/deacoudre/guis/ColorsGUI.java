@@ -7,9 +7,11 @@ package me.poutineqc.deacoudre.guis;
 import java.util.Iterator;
 import java.util.List;
 import me.poutineqc.deacoudre.tools.ItemStackManager;
+import org.bukkit.Tag;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import me.poutineqc.deacoudre.instances.User;
 import me.poutineqc.deacoudre.Language;
@@ -38,9 +40,10 @@ public class ColorsGUI implements Listener
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event) {
         final Inventory inv = event.getInventory();
+        final InventoryView invView = event.getView();
         final Player player = (Player)event.getWhoClicked();
         final Language local = this.playerData.getLanguageOfPlayer(player);
-        if (!ChatColor.stripColor(inv.getTitle()).equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.colorGuiTitle)))) {
+        if (!ChatColor.stripColor(invView.getTitle()).equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.colorGuiTitle)))) {
             return;
         }
         if (event.getAction().equals((Object)InventoryAction.NOTHING) || event.getAction().equals((Object)InventoryAction.UNKNOWN)) {
@@ -62,7 +65,7 @@ public class ColorsGUI implements Listener
             local.sendMsg(player, local.colorRandom);
             player.closeInventory();
         }
-        if (item.getType() != Material.WOOL && item.getType() != Material.STAINED_CLAY) {
+        if (Tag.WOOL.isTagged(item.getType()) && item.getType().toString().contains(Material.TERRACOTTA.toString())) { //CHECK IF ITEM CLICKED IS WOOL OR TERRACOTTA
             return;
         }
         if (arena.getColorManager().isBlockUsed(item)) {
@@ -79,8 +82,9 @@ public class ColorsGUI implements Listener
     public static void openColorsGui(final Player player, final Language local, final Arena arena) {
         final ItemStack userCurrentItem = arena.getUser(player).getItemStack();
         int size = 18;
-        final List<ItemStackManager> availableWoolItems = arena.getColorManager().getSpecificAvailableItems(Material.WOOL);
-        final List<ItemStackManager> availableClayItems = arena.getColorManager().getSpecificAvailableItems(Material.STAINED_CLAY);
+        final List<ItemStackManager> availableWoolItems = arena.getColorManager().getSpecificAvailableItems("WOOL");
+        final List<ItemStackManager> availableClayItems = arena.getColorManager().getSpecificAvailableItems("TERRACOTTA");
+        //TODO: CONCRETE
         if (availableWoolItems.size() > 9) {
             size += 18;
         }
@@ -96,8 +100,7 @@ public class ColorsGUI implements Listener
         Inventory inv = Bukkit.createInventory((InventoryHolder)null, size, ChatColor.translateAlternateColorCodes('&', local.colorGuiTitle));
         ItemStackManager icon;
         if (userCurrentItem == null) {
-            icon = new ItemStackManager(Material.SKULL_ITEM);
-            icon.setData((short)3);
+            icon = new ItemStackManager(Material.PLAYER_HEAD);
             icon.setPlayerHeadName("azbandit2000");
             icon.setTitle(ChatColor.translateAlternateColorCodes('&', local.colorGuiCurrent));
             icon.addToLore(ChatColor.translateAlternateColorCodes('&', local.keyWordColorRandom));
@@ -110,9 +113,8 @@ public class ColorsGUI implements Listener
         }
         icon.setPosition(4);
         inv = icon.addToInventory(inv);
-        icon = new ItemStackManager(Material.STAINED_GLASS_PANE);
+        icon = new ItemStackManager(Material.ORANGE_STAINED_GLASS_PANE);
         icon.setTitle(" ");
-        icon.setData((short)1);
         for (int i = 0; i < inv.getSize(); ++i) {
             switch (i) {
                 case 9:
@@ -155,8 +157,7 @@ public class ColorsGUI implements Listener
             icon.setPosition(slot++);
             icon.addToInventory(inv);
         }
-        icon = new ItemStackManager(Material.SKULL_ITEM, 18);
-        icon.setData((short)3);
+        icon = new ItemStackManager(Material.PLAYER_HEAD, 18);
         icon.setPlayerHeadName("azbandit2000");
         icon.setTitle(ChatColor.translateAlternateColorCodes('&', local.keyWordColorRandom));
         icon.addToInventory(inv);

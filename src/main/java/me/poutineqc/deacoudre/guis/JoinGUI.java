@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import java.util.Collections;
 import java.util.ArrayList;
 import org.bukkit.event.EventHandler;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import me.poutineqc.deacoudre.Language;
 import org.bukkit.inventory.Inventory;
@@ -37,9 +38,10 @@ public class JoinGUI implements Listener
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event) {
         final Inventory inv = event.getInventory();
+        final InventoryView invView = event.getView();
         final Player player = (Player)event.getWhoClicked();
         final Language local = this.playerData.getLanguageOfPlayer(player);
-        if (!ChatColor.stripColor(inv.getTitle()).equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.joinGuiTitle)))) {
+        if (!ChatColor.stripColor(invView.getTitle()).equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.joinGuiTitle)))) {
             return;
         }
         if (event.getAction().equals((Object)InventoryAction.NOTHING) || event.getAction().equals((Object)InventoryAction.UNKNOWN)) {
@@ -58,7 +60,7 @@ public class JoinGUI implements Listener
             this.openJoinGui(player, Integer.parseInt(ChatColor.stripColor((String)item.getItemMeta().getLore().get(0))));
             return;
         }
-        if (item.getType() != Material.INK_SACK) {
+        if (item.getType() != Material.INK_SAC) {
             return;
         }
         final Arena arena = Arena.getArenaFromName(itemName);
@@ -106,9 +108,8 @@ public class JoinGUI implements Listener
             icon.addToLore(String.valueOf(page - 1));
             inv = icon.addToInventory(inv);
         }
-        icon = new ItemStackManager(Material.STAINED_GLASS_PANE);
+        icon = new ItemStackManager(Material.ORANGE_STAINED_GLASS_PANE);
         icon.setTitle(" ");
-        icon.setData((short)1);
         for (int j = 0; j < inv.getSize(); ++j) {
             switch (j) {
                 case 9:
@@ -126,7 +127,7 @@ public class JoinGUI implements Listener
                 }
             }
         }
-        icon = new ItemStackManager(Material.INK_SACK);
+        icon = new ItemStackManager(Material.INK_SAC);
         int slot = 18;
         for (final String s2 : Arenas) {
             final Arena arena2 = Arena.getArenaFromName(s2);

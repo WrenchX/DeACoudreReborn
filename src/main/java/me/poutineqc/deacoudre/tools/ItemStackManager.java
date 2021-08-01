@@ -37,7 +37,8 @@ public class ItemStackManager
     public Material getMaterial() {
         return this.item.getType();
     }
-    
+
+    @Deprecated
     public short getData() {
         return this.item.getDurability();
     }
@@ -45,7 +46,8 @@ public class ItemStackManager
     public void setPosition(final int position) {
         this.position = position;
     }
-    
+
+    @Deprecated
     public void setData(final short data) {
         this.item.setDurability(data);
     }

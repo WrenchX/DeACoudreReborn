@@ -9,6 +9,8 @@ import me.poutineqc.deacoudre.guis.ColorsGUI;
 import java.util.Map;
 import me.poutineqc.deacoudre.Language;
 import java.sql.ResultSet;
+
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import java.util.Iterator;
 import org.bukkit.Bukkit;
@@ -18,7 +20,6 @@ import me.poutineqc.deacoudre.instances.GameState;
 import me.poutineqc.deacoudre.instances.Arena;
 import me.poutineqc.deacoudre.Permissions;
 import org.bukkit.ChatColor;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

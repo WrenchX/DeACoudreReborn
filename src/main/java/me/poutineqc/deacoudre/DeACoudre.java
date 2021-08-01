@@ -4,6 +4,8 @@
 
 package me.poutineqc.deacoudre;
 
+import me.poutineqc.deacoudre.instances.Selection;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.PluginManager;
 import me.poutineqc.deacoudre.events.ElytraToggle;
@@ -16,6 +18,10 @@ import me.poutineqc.deacoudre.events.PlayerTeleport;
 import me.poutineqc.deacoudre.events.PlayerMove;
 import me.poutineqc.deacoudre.events.PlayerDisconnect;
 import org.bukkit.event.Listener;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.Bukkit;
@@ -53,6 +59,7 @@ public class DeACoudre extends JavaPlugin
     private static Economy econ;
     public static String NMS_VERSION;
     public static boolean aboveOneNine;
+    public static HashMap<UUID, Selection> selections;
     
     public void onEnable() {
         final PluginDescriptionFile pdfFile = this.getDescription();

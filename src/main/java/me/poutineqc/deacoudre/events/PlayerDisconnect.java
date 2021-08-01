@@ -4,6 +4,7 @@
 
 package me.poutineqc.deacoudre.events;
 
+import me.poutineqc.deacoudre.DeACoudre;
 import org.bukkit.event.EventHandler;
 import me.poutineqc.deacoudre.instances.User;
 import org.bukkit.entity.Player;
@@ -22,5 +23,6 @@ public class PlayerDisconnect implements Listener
         }
         final User user = arena.getUser(player);
         arena.removeUserFromGame(user, true);
+        DeACoudre.selections.remove(player.getUniqueId());
     }
 }

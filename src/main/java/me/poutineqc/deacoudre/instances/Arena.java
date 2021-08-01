@@ -4,43 +4,35 @@
 
 package me.poutineqc.deacoudre.instances;
 
-import org.bukkit.Sound;
+import org.bukkit.*;
 import me.poutineqc.deacoudre.tools.ItemStackManager;
 import org.bukkit.block.Block;
-import org.bukkit.Material;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import me.poutineqc.deacoudre.tools.Utils;
 import me.poutineqc.deacoudre.tools.JsonBuilder;
-import java.util.Collection;
+
 import java.util.Random;
 import me.poutineqc.deacoudre.Permissions;
 import org.apache.commons.lang3.StringUtils;
-import com.sk89q.worldedit.bukkit.selections.Selection;
 import org.bukkit.util.Vector;
 import me.poutineqc.deacoudre.commands.DacSign;
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
 import me.poutineqc.deacoudre.Language;
-import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.entity.Player;
 import org.bukkit.configuration.ConfigurationSection;
-import java.util.Iterator;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.bukkit.Bukkit;
 import java.util.ArrayList;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Objective;
 import java.util.List;
 import me.poutineqc.deacoudre.tools.ColorManager;
-import org.bukkit.Location;
-import org.bukkit.World;
 import me.poutineqc.deacoudre.events.PlayerDamage;
 import me.poutineqc.deacoudre.achievements.Achievement;
 import me.poutineqc.deacoudre.ArenaData;
@@ -289,7 +281,7 @@ public class Arena
         else {
             try {
                 Object option = null;
-                ?[] enumConstants;
+                Object[] enumConstants;
                 for (int length = (enumConstants = Class.forName("org.bukkit.scoreboard.NameTagVisibility").getEnumConstants()).length, i = 0; i < length; ++i) {
                     final Object optionElement = enumConstants[i];
                     if (optionElement.toString().equalsIgnoreCase("NEVER")) {
@@ -374,11 +366,17 @@ public class Arena
         }
     }
     
-    public boolean setPool(final Player player) {
-        final Selection s = this.getWorldEdit().getSelection(player);
+    public boolean setPool(final org.bukkit.entity.Player player) {
+
+        final Selection s = DeACoudre.selections.get(player.getUniqueId());
+// note: not necessarily the player's current world, see the concepts page
         if (s == null) {
             return false;
         }
+        if(s.getWorld() == null) {
+            player.sendMessage(ChatColor.RED + "Your selection is not valid!");
+        }
+        World selectionWorld = s.getWorld();
         this.gameState = GameState.UNREADY;
         this.world = s.getWorld();
         if (!this.world.getName().equalsIgnoreCase(player.getWorld().getName())) {
@@ -1094,14 +1092,6 @@ public class Arena
         DacSign.updateSigns(this);
     }
     
-    private WorldEditPlugin getWorldEdit() {
-        final Plugin p = Bukkit.getPluginManager().getPlugin("WorldEdit");
-        if (p instanceof WorldEditPlugin) {
-            return (WorldEditPlugin)p;
-        }
-        return null;
-    }
-    
     public CharSequence getPlayerListToDisplay(final Language localInstance) {
         String playerListToDisplay = this.users.get(0).getPlayer().getDisplayName();
         for (int i = 1; i < this.users.size(); ++i) {
@@ -1132,16 +1122,16 @@ public class Arena
             }
         }
     }
-    
+
     public void fillWater() {
         for (int x = this.minPoint.getBlockX(); x <= this.maxPoint.getBlockX(); ++x) {
             for (int y = this.maxPoint.getBlockY(); y >= this.minPoint.getBlockY(); --y) {
                 for (int z = this.minPoint.getBlockZ(); z <= this.maxPoint.getBlockZ(); ++z) {
                     final Location location = new Location(this.world, (double)x, (double)y, (double)z);
                     final Block block = location.getBlock();
-                    if (block.getType() == Material.STAINED_CLAY || block.getType() == Material.WOOL || block.getType() == Material.STAINED_GLASS) {
+                    if (Tag.WOOL.isTagged(block.getType()) || block.getType().toString().contains(Material.TERRACOTTA.toString()) || block.getType().toString().contains("STAINED_GLASS")) {
                         for (final ItemStackManager item : this.colorManager.getOnlyChoosenBlocks()) {
-                            if ((item.getMaterial() == block.getType() || block.getType() == Material.STAINED_GLASS) && item.getItem().getDurability() == block.getData()) {
+                            if ((item.getMaterial() == block.getType() || block.getType().toString().contains("STAINED_GLASS")) && item.getItem().getDurability() == block.getData()) {
                                 block.setType(Material.WATER);
                                 break;
                             }
@@ -1158,8 +1148,8 @@ public class Arena
                 for (int z = this.minPoint.getBlockZ(); z <= this.maxPoint.getBlockZ(); ++z) {
                     final Location location = new Location(this.world, (double)x, (double)y, (double)z);
                     final Block block = location.getBlock();
-                    if (block.getType() == Material.STAINED_CLAY || block.getType() == Material.WOOL || block.getType() == Material.STAINED_GLASS) {
-                        if ((item.getType() == block.getType() || block.getType() == Material.STAINED_GLASS) && item.getDurability() == block.getData()) {
+                    if (Tag.WOOL.isTagged(block.getType()) || block.getType().toString().contains(Material.TERRACOTTA.toString()) || block.getType().toString().contains("STAINED_GLASS")) {
+                        if ((item.getType() == block.getType() || block.getType().toString().contains("STAINED_GLASS")) && ColorManager.getData(item.getType()) == ColorManager.getData(block.getType())) {
                             block.setType(Material.WATER);
                         }
                     }

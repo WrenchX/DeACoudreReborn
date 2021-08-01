@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 public class DacCommand
 {
+    //TODO: Plugin.YML
     private String commandName;
     private String description;
     private String permission;

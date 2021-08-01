@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import me.poutineqc.deacoudre.Language;
 import org.bukkit.inventory.Inventory;
@@ -43,9 +44,10 @@ public class AchievementsGUI implements Listener
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event) {
         final Inventory inv = event.getInventory();
+        final InventoryView invView = event.getView();
         final Player player = (Player)event.getWhoClicked();
         final Language local = this.playerData.getLanguageOfPlayer(player);
-        if (ChatColor.stripColor(inv.getTitle()).equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.keyWordStats))) || ChatColor.stripColor(inv.getTitle()).equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.keyWordChallenges)))) {
+        if (ChatColor.stripColor(invView.getTitle()).equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.keyWordStats))) || ChatColor.stripColor(invView.getTitle()).equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.keyWordChallenges)))) {
             if (event.getAction().equals((Object)InventoryAction.NOTHING) || event.getAction().equals((Object)InventoryAction.UNKNOWN)) {
                 return;
             }
@@ -116,7 +118,7 @@ public class AchievementsGUI implements Listener
         icon = new ItemStackManager(Material.ARROW, 8);
         icon.setTitle(ChatColor.AQUA + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.keyWordChallenges)));
         inv = icon.addToInventory(inv);
-        icon = new ItemStackManager(Material.EMPTY_MAP, 18);
+        icon = new ItemStackManager(Material.MAP, 18);
         icon.setTitle(ChatColor.GOLD + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.keyWordStatsTop10)) + " : " + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.keyWordStatsGamesPlayed)));
         icon.addToLore(ChatColor.YELLOW + "---------------------------");
         if (this.mysql.hasConnection()) {
@@ -136,7 +138,7 @@ public class AchievementsGUI implements Listener
             }
         }
         inv = icon.addToInventory(inv);
-        icon = new ItemStackManager(Material.EMPTY_MAP, 27);
+        icon = new ItemStackManager(Material.MAP, 27);
         icon.setTitle(ChatColor.GOLD + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.keyWordStatsTop10)) + " : " + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.keyWordStatsGamesWon)));
         icon.addToLore(ChatColor.YELLOW + "---------------------------");
         if (this.mysql.hasConnection()) {
@@ -156,7 +158,7 @@ public class AchievementsGUI implements Listener
             }
         }
         inv = icon.addToInventory(inv);
-        icon = new ItemStackManager(Material.EMPTY_MAP, 36);
+        icon = new ItemStackManager(Material.MAP, 36);
         icon.setTitle(ChatColor.GOLD + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.keyWordStatsTop10)) + " : " + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.keyWordStatsGamesLost)));
         icon.addToLore(ChatColor.YELLOW + "---------------------------");
         if (this.mysql.hasConnection()) {
@@ -176,7 +178,7 @@ public class AchievementsGUI implements Listener
             }
         }
         inv = icon.addToInventory(inv);
-        icon = new ItemStackManager(Material.EMPTY_MAP, 45);
+        icon = new ItemStackManager(Material.MAP, 45);
         icon.setTitle(ChatColor.GOLD + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.keyWordStatsTop10)) + " : " + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.keyWordStatsDacsDone)));
         icon.addToLore(ChatColor.YELLOW + "---------------------------");
         if (this.mysql.hasConnection()) {
@@ -196,9 +198,8 @@ public class AchievementsGUI implements Listener
             }
         }
         icon.addToInventory(inv);
-        icon = new ItemStackManager(Material.STAINED_GLASS_PANE);
+        icon = new ItemStackManager(Material.ORANGE_STAINED_GLASS_PANE);
         icon.setTitle(" ");
-        icon.setData((short)1);
         for (int i = 0; i < inv.getSize(); ++i) {
             switch (i) {
                 case 9:
@@ -226,7 +227,7 @@ public class AchievementsGUI implements Listener
         for (int j = 0; j < 4; ++j) {
             int position = j * 9 + 20;
             for (final AchievementsObject ao : achievements.get(j)) {
-                icon = new ItemStackManager(Material.WOOL, position++);
+                icon = new ItemStackManager(Material.GRAY_WOOL, position++);
                 int amount = 0;
                 if (this.mysql.hasConnection()) {
                     final ResultSet query2 = this.mysql.query("SELECT " + challengePath[j].substring(1) + " FROM " + this.config.tablePrefix + "PLAYERS WHERE UUID='" + UUID + "';");
@@ -243,13 +244,13 @@ public class AchievementsGUI implements Listener
                     amount = this.playerData.getData().getInt("players." + UUID + challengePath[j], 0);
                 }
                 if (amount >= ao.get_level()) {
-                    icon.setData((short)5);
+                    icon = new ItemStackManager(Material.GREEN_WOOL, position++);
                     icon.setTitle(ChatColor.GREEN + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', challengeNames[j].replace("%amount%", String.valueOf(ao.get_level())))));
                     icon.addToLore(ChatColor.YELLOW + "---------------------------");
                     icon.addToLore(ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', local.keyWordStatsProgression) + ": " + ChatColor.GREEN + local.keyWordStatsCompleted);
                 }
                 else {
-                    icon.setData((short)8);
+                    icon = new ItemStackManager(Material.LIGHT_GRAY_WOOL, position++);
                     icon.setTitle(ChatColor.RED + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', challengeNames[j].replace("%amount%", String.valueOf(ao.get_level())))));
                     icon.addToLore(ChatColor.YELLOW + "---------------------------");
                     icon.addToLore(ChatColor.AQUA + ChatColor.translateAlternateColorCodes('&', local.keyWordStatsProgression) + ": " + ChatColor.YELLOW + String.valueOf(amount) + "/" + ao.get_level());
@@ -311,9 +312,8 @@ public class AchievementsGUI implements Listener
             icon.addToLore(ChatColor.LIGHT_PURPLE + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.keyWordStatsMoneyGot)) + ": " + ChatColor.YELLOW + DeACoudre.getEconomy().currencyNamePlural() + moneyGains);
         }
         inv = icon.addToInventory(inv);
-        icon = new ItemStackManager(Material.STAINED_GLASS_PANE);
+        icon = new ItemStackManager(Material.ORANGE_STAINED_GLASS_PANE);
         icon.setTitle(" ");
-        icon.setData((short)1);
         for (int i = 0; i < inv.getSize(); ++i) {
             switch (i) {
                 case 9:
@@ -336,7 +336,7 @@ public class AchievementsGUI implements Listener
         final double[] challengeReward = { this.config.challengeRewardFinishArenaFirstTime, this.config.challengeReward8PlayersGame, this.config.challengeRewardReachRound100, this.config.hiddenChallengeReward, this.config.hiddenChallengeReward, this.config.hiddenChallengeReward };
         int position = 19;
         for (int j = 0; j < 6; ++j) {
-            icon = new ItemStackManager(Material.INK_SACK, position++);
+            icon = new ItemStackManager(Material.INK_SAC, position++);
             boolean completed = false;
             if (this.mysql.hasConnection()) {
                 final ResultSet query2 = this.mysql.query("SELECT " + challengePath[j].substring(12) + " FROM " + this.config.tablePrefix + "PLAYERS WHERE UUID='" + UUID + "';");

@@ -5,6 +5,8 @@
 package me.poutineqc.deacoudre.guis;
 
 import java.util.List;
+
+import org.bukkit.Tag;
 import org.bukkit.inventory.Inventory;
 import me.poutineqc.deacoudre.tools.ItemStackManager;
 import org.bukkit.inventory.InventoryHolder;
@@ -39,7 +41,7 @@ public class ChooseColorGUI implements Listener
         }
         final Player player = (Player)event.getWhoClicked();
         final Language local = this.playerData.getLanguageOfPlayer(player);
-        if (!ChatColor.stripColor(event.getInventory().getName()).equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.editColorGuiTitle)))) {
+        if (!ChatColor.stripColor(event.getView().getTitle()).equalsIgnoreCase(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', local.editColorGuiTitle)))) {
             return;
         }
         if (event.getAction() == InventoryAction.NOTHING || event.getAction() == InventoryAction.UNKNOWN) {
@@ -47,7 +49,7 @@ public class ChooseColorGUI implements Listener
         }
         event.setCancelled(true);
         final ItemStack item = event.getCurrentItem();
-        if (item.getType() != Material.STAINED_CLAY && item.getType() != Material.WOOL) {
+        if (Tag.WOOL.isTagged(item.getType()) && item.getType().toString().contains(Material.TERRACOTTA.toString())) {
             return;
         }
         final Arena arena = Arena.getArenaFromName(ChatColor.stripColor((String)event.getInventory().getItem(0).getItemMeta().getLore().get(0)));
@@ -73,8 +75,8 @@ public class ChooseColorGUI implements Listener
             local.sendMsg(player, local.editColorChoosen);
             return;
         }
-        int valueOfItem = item.getDurability();
-        if (item.getType() == Material.STAINED_CLAY) {
+        int valueOfItem = ColorManager.getData(item.getType());
+        if (item.getType().toString().contains(Material.TERRACOTTA.toString())) {
             valueOfItem += 16;
         }
         if (enchanted) {
@@ -98,8 +100,7 @@ public class ChooseColorGUI implements Listener
             icon.addToLore(loreLine);
         }
         icon.addToInventory(inv);
-        icon = new ItemStackManager(Material.STAINED_GLASS_PANE);
-        icon.setData((short)10);
+        icon = new ItemStackManager(Material.PURPLE_WOOL);
         icon.setTitle(" ");
         for (int i = 0; i < inv.getSize(); ++i) {
             switch (i) {
